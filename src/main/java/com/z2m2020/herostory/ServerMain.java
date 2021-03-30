@@ -1,5 +1,6 @@
 package com.z2m2020.herostory;
 
+import com.z2m2020.herostory.cmdhandler.CmdHandlerFactory;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -26,10 +27,14 @@ public class ServerMain {
          */
         PropertyConfigurator.configure(ServerMain.class.getClassLoader().getResourceAsStream("log4j.properties"));
 
-        /**
-         * netty 代码
-         */
 
+        //初始化 cmdHandlerFactory
+        CmdHandlerFactory.init();
+
+        //初始化 消息识别器
+        GameMsgRecognizer.init();
+
+        //netty代码
         final NioEventLoopGroup bossGroup = new NioEventLoopGroup();
         final NioEventLoopGroup workerGroup =new NioEventLoopGroup();
 

@@ -1,7 +1,7 @@
 package com.z2m2020.herostory;
 
 public class User {
-    public int userId;
+    public Integer userId;
     public String heroAvatar;
 
     public User() {
