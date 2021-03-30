@@ -58,6 +58,35 @@ public class GameMsgHandler extends SimpleChannelInboundHandler<Object> {
     }
 
     /**
+     * 拿到用户id,把用从_userMap中移除
+     * @param ctx
+     */
+    @Override
+    public void handlerRemoved(ChannelHandlerContext ctx)  {
+
+       try{
+           super.handlerRemoved(ctx);
+
+           Integer userID=(Integer)ctx.channel().attr(AttributeKey.valueOf("userID")).get();
+
+           if(null==userID){
+               return;
+           }
+
+           _userMap.remove(userID);
+
+           GameMsgProtocol.UserQuitResult.Builder resultBuilder=GameMsgProtocol.UserQuitResult.newBuilder();
+           resultBuilder.setQuitUserId(userID);
+
+           final GameMsgProtocol.UserQuitResult newResult = resultBuilder.build();
+           _channelGroup.writeAndFlush(newResult);
+       }catch(Exception ex){
+           //记录错误日志
+           LOGGER.error(ex.getMessage(),ex);
+       }
+    }
+
+    /**
      * 信道组
      *
      * @param ctx
@@ -114,7 +143,7 @@ public class GameMsgHandler extends SimpleChannelInboundHandler<Object> {
             GameMsgProtocol.UserEntryResult newResult = resultBuilder.build();
             _channelGroup.writeAndFlush(newResult);
         } else if (msg instanceof GameMsgProtocol.WhoElseIsHereCmd) {
-            GameMsgProtocol.WhoElseIsHereResult.Builder resultBuilder = GameMsgProtocol.WhoElseIsHereResult.newBuilder();
+//            GameMsgProtocol.WhoElseIsHereResult.Builder resultBuilder = GameMsgProtocol.WhoElseIsHereResult.newBuilder();
             /**
              *  写出所有用户
              */
@@ -134,7 +163,21 @@ public class GameMsgHandler extends SimpleChannelInboundHandler<Object> {
 
             //================================================
 //                        Function f =
+            final Predicate<User> userNoNull = u -> null != u;
+            final BiConsumer<Integer, String> writeAndFlushUserInfo = (userId, heroAvatar) -> {
+                GameMsgProtocol.WhoElseIsHereResult.Builder resultBuilder = GameMsgProtocol.WhoElseIsHereResult.newBuilder();
+                GameMsgProtocol.WhoElseIsHereResult.UserInfo.Builder userInfoBuilder = GameMsgProtocol.WhoElseIsHereResult.UserInfo.newBuilder();
+                userInfoBuilder.setUserId(userId)
+                        .setHeroAvatar(heroAvatar);
 
+                ctx.writeAndFlush(resultBuilder.addUserInfo(userInfoBuilder).build());
+            };
+//        final Stream<Map<Integer, User>> userMap = Stream.of(_userMap);
+//        final Collector<User, ?, Map<Integer, String>> userMapCollector = ;
+            _userMap.values().stream().//Users
+                    filter(userNoNull).
+                    collect(Collectors.toMap(User::getUserId, User::getHeroAvatar)).
+                    forEach(writeAndFlushUserInfo);
         }else if (msg instanceof GameMsgProtocol.UserMoveToCmd){
             //
             //用户移动
@@ -165,22 +208,8 @@ public class GameMsgHandler extends SimpleChannelInboundHandler<Object> {
             _channelGroup.writeAndFlush(newResult);
 
         }
-        ;
-        final Predicate<User> userNoNull = u -> null != u;
-        final BiConsumer<Integer, String> writeAndFlushUserInfo = (userId, heroAvatar) -> {
-            GameMsgProtocol.WhoElseIsHereResult.Builder resultBuilder = GameMsgProtocol.WhoElseIsHereResult.newBuilder();
-            GameMsgProtocol.WhoElseIsHereResult.UserInfo.Builder userInfoBuilder = GameMsgProtocol.WhoElseIsHereResult.UserInfo.newBuilder();
-            userInfoBuilder.setUserId(userId)
-                    .setHeroAvatar(heroAvatar);
 
-            ctx.writeAndFlush(resultBuilder.addUserInfo(userInfoBuilder).build());
-        };
-//        final Stream<Map<Integer, User>> userMap = Stream.of(_userMap);
-//        final Collector<User, ?, Map<Integer, String>> userMapCollector = ;
-        _userMap.values().stream().//Users
-                filter(userNoNull).
-                collect(Collectors.toMap(User::getUserId, User::getHeroAvatar)).
-                forEach(writeAndFlushUserInfo);
+
 
     }
 }

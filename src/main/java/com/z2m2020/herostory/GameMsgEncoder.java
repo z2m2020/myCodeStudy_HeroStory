@@ -42,7 +42,8 @@ public class GameMsgEncoder extends ChannelOutboundHandlerAdapter {
             }else if(msg instanceof GameMsgProtocol.UserMoveToResult){
                 msgCode=GameMsgProtocol.MsgCode.USER_MOVE_TO_RESULT_VALUE;
 
-            }
+            }else if(msg instanceof GameMsgProtocol.UserQuitResult){
+                msgCode=GameMsgProtocol.MsgCode.USER_QUIT_RESULT_VALUE;}
             else{
                 LOGGER.error("无法识别的消息类型,msgClazz={}",msg.getClass().getSimpleName()) ;
                 super.write(ctx,msg,promise);
