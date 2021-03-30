@@ -28,7 +28,7 @@ import static com.sun.xml.internal.ws.policy.sourcemodel.wspolicy.XmlToken.Optio
 public class GameMsgHandler extends SimpleChannelInboundHandler<Object> {
     static private Logger LOGGER = LoggerFactory.getLogger(GameMsgHandler.class);
 
-    static private final ChannelGroup _channelGroup = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
+
 
 
     /**
@@ -48,7 +48,7 @@ public class GameMsgHandler extends SimpleChannelInboundHandler<Object> {
 
         try {
             super.channelActive(ctx);
-            _channelGroup.add(ctx.channel());
+            Broadcaster.addChannel(ctx.channel());
 
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -63,7 +63,9 @@ public class GameMsgHandler extends SimpleChannelInboundHandler<Object> {
      */
     @Override
     public void handlerRemoved(ChannelHandlerContext ctx)  {
-
+        if(null==ctx){
+            return;
+        }
        try{
            super.handlerRemoved(ctx);
 
@@ -74,12 +76,15 @@ public class GameMsgHandler extends SimpleChannelInboundHandler<Object> {
            }
 
            _userMap.remove(userID);
+           Broadcaster.removeChannel(ctx.channel());
 
            GameMsgProtocol.UserQuitResult.Builder resultBuilder=GameMsgProtocol.UserQuitResult.newBuilder();
            resultBuilder.setQuitUserId(userID);
 
            final GameMsgProtocol.UserQuitResult newResult = resultBuilder.build();
-           _channelGroup.writeAndFlush(newResult);
+           Broadcaster.broadcast(newResult);
+
+
        }catch(Exception ex){
            //记录错误日志
            LOGGER.error(ex.getMessage(),ex);
@@ -141,7 +146,7 @@ public class GameMsgHandler extends SimpleChannelInboundHandler<Object> {
              */
 
             GameMsgProtocol.UserEntryResult newResult = resultBuilder.build();
-            _channelGroup.writeAndFlush(newResult);
+            Broadcaster.broadcast(newResult);
         } else if (msg instanceof GameMsgProtocol.WhoElseIsHereCmd) {
 //            GameMsgProtocol.WhoElseIsHereResult.Builder resultBuilder = GameMsgProtocol.WhoElseIsHereResult.newBuilder();
             /**
@@ -205,7 +210,7 @@ public class GameMsgHandler extends SimpleChannelInboundHandler<Object> {
             resultBuilder.setMoveToPosY(cmd.getMoveToPosY());
             //消息封装好了,继续添加decoder和encoder
             final GameMsgProtocol.UserMoveToResult newResult = resultBuilder.build();
-            _channelGroup.writeAndFlush(newResult);
+            Broadcaster.broadcast(newResult);
 
         }
 
