@@ -4,6 +4,11 @@ public class User {
     public Integer userId;
     public String heroAvatar;
     public final MoveState moveState=new MoveState();
+    /**
+     * 当前血量
+     */
+    public int currHp;
+
     public User() {
     }
 
