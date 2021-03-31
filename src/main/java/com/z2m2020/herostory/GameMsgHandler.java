@@ -77,34 +77,11 @@ public class GameMsgHandler extends SimpleChannelInboundHandler<Object> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
-        LOGGER.info("收到客户端消息,msgClazz={} ,msg={} ",
-                msg.getClass().getSimpleName(),
-                msg
-        );
-
-
-        /**
-         *  得到其他玩家发来的用户信息,并转发
-         */
-
-        try {
-            ICmdHandler<? extends GeneratedMessageV3> cmdHandler= CmdHandlerFactory.create(msg.getClass());
-            if(null!=cmdHandler){
-                cmdHandler.handle(ctx,this.cast(msg));
-            }
-        }catch (Exception ex){
-            //记录错误日志
-            LOGGER.error(ex.getMessage(),ex);
+        if(null==ctx|| null==msg){
+            return;
         }
+
+        MainMsgProcessor.process(ctx, msg);
+
     }
-
-    static private <TCmd extends GeneratedMessageV3> TCmd cast(Object msg){
-        if(null==msg){
-            return null;
-
-        }else{
-            return (TCmd) msg;
-        }
-    }
-
 }

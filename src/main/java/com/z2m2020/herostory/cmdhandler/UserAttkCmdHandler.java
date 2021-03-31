@@ -39,9 +39,12 @@ public class UserAttkCmdHandler implements ICmdHandler<GameMsgProtocol.UserAttkC
         final User targetUser = UserManager.getByUserId(targetUserId);
 
         if (null == targetUser) {
+            broadcastAttkResult(attkUserId,-1);
+
             return;
         }
 
+        LOGGER.info("当前线程= {}",Thread.currentThread().getName());
         final int dmgPoint=10;
         targetUser.currHp=targetUser.currHp-dmgPoint;
 
