@@ -1,31 +1,14 @@
 package com.z2m2020.herostory;
 
 import com.google.protobuf.GeneratedMessageV3;
-import com.sun.org.glassfish.gmbal.GmbalException;
 import com.z2m2020.herostory.cmdhandler.*;
+import com.z2m2020.herostory.model.UserManager;
 import com.z2m2020.herostory.msg.GameMsgProtocol;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.channel.group.ChannelGroup;
-import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.util.AttributeKey;
-import io.netty.util.concurrent.GlobalEventExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static com.sun.xml.internal.ws.policy.sourcemodel.wspolicy.XmlToken.Optional;
 
 public class GameMsgHandler extends SimpleChannelInboundHandler<Object> {
     static private Logger LOGGER = LoggerFactory.getLogger(GameMsgHandler.class);
@@ -68,6 +51,7 @@ public class GameMsgHandler extends SimpleChannelInboundHandler<Object> {
         }
         try {
             super.handlerRemoved(ctx);
+            Broadcaster.removeChannel(ctx.channel());
 
             Integer userID = (Integer) ctx.channel().attr(AttributeKey.valueOf("userID")).get();
 
@@ -76,7 +60,7 @@ public class GameMsgHandler extends SimpleChannelInboundHandler<Object> {
             }
 
             UserManager.removeByUserId(userID);
-            Broadcaster.removeChannel(ctx.channel());
+
 
             GameMsgProtocol.UserQuitResult.Builder resultBuilder = GameMsgProtocol.UserQuitResult.newBuilder();
             resultBuilder.setQuitUserId(userID);

@@ -1,9 +1,8 @@
-package com.z2m2020.herostory;
+package com.z2m2020.herostory.model;
 
-import javax.lang.model.element.VariableElement;
+import com.z2m2020.herostory.model.User;
+
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -15,7 +14,7 @@ public final class UserManager {
     /**
      * 用户字典
      */
-    static private final Map<Integer,User> _userMap=new ConcurrentHashMap<>();
+    static private final Map<Integer, User> _userMap=new ConcurrentHashMap<>();
 
     /**
      * 私有化默认构造器
@@ -50,6 +49,11 @@ public final class UserManager {
      */
     static public Collection<User> listUser(){
         return _userMap.values();
+    }
+
+
+    static public User getByUserId(int userId){
+        return _userMap.get(userId);
     }
 
 }

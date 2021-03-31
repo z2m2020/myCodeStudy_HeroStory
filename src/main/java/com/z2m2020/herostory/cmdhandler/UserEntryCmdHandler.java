@@ -1,8 +1,8 @@
 package com.z2m2020.herostory.cmdhandler;
 
 import com.z2m2020.herostory.Broadcaster;
-import com.z2m2020.herostory.User;
-import com.z2m2020.herostory.UserManager;
+import com.z2m2020.herostory.model.User;
+import com.z2m2020.herostory.model.UserManager;
 import com.z2m2020.herostory.msg.GameMsgProtocol;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.AttributeKey;

@@ -1,9 +1,9 @@
-package com.z2m2020.herostory;
+package com.z2m2020.herostory.model;
 
 public class User {
     public Integer userId;
     public String heroAvatar;
-
+    public final MoveState moveState=new MoveState();
     public User() {
     }
 
