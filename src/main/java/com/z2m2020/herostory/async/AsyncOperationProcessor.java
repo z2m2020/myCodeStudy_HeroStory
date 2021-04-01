@@ -16,7 +16,7 @@ public class AsyncOperationProcessor {
      */
     static private final AsyncOperationProcessor _instance=new AsyncOperationProcessor();
 
-
+    private final ExecutorService[] _esArray =new ExecutorService[8];
 
     private final ExecutorService _es= Executors.newSingleThreadExecutor((newRunnable)->{
         Thread newThread=new Thread(newRunnable);
@@ -27,7 +27,16 @@ public class AsyncOperationProcessor {
     /**
      * 私有化构造对象
      */
-    private AsyncOperationProcessor(){}
+    private AsyncOperationProcessor(){
+        for(int i=0;i<_esArray.length;i++){
+            final String threadName="AsyncOperationProcessor["+i+"]";
+            _esArray[i]=Executors.newSingleThreadExecutor((r)->{
+                Thread t=new Thread(r);
+                t.setName(threadName);
+                return t;
+            });
+        }
+    }
 
     /**
      * 获得单例对象
@@ -45,11 +54,17 @@ public class AsyncOperationProcessor {
             return;
 
         }
-        _es.submit(()->{
+
+        int bindId=Math.abs(op.getBindId());
+        int esIndex=bindId%_esArray.length;
+
+
+        _esArray[esIndex].submit(()->{
             //执行异步操作
             op.doAsync();
             //回到主线程,执行完成逻辑
-            MainMsgProcessor.getInstance().process(()->op.doFinish());
+            MainMsgProcessor.getInstance().process(op::doFinish);
+//            MainMsgProcessor.getInstance().process(()->op.doFinish());
         });
     }
 
