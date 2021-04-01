@@ -2,6 +2,7 @@ package com.z2m2020.herostory.login;
 
 import com.z2m2020.herostory.MySqlSessionFactory;
 import com.z2m2020.herostory.async.AsyncOperationProcessor;
+import com.z2m2020.herostory.async.IAsyncOperation;
 import com.z2m2020.herostory.login.db.IUserDao;
 import com.z2m2020.herostory.login.db.UserEntity;
 import org.apache.ibatis.session.SqlSession;
@@ -45,41 +46,78 @@ public class LoginService {
            return;
         }
 
+        AsyncGetUserEntity asynOp=new AsyncGetUserEntity(userName,password){
+            @Override
+            public void doFinish() {
+                if (null!=callback){
+                    callback.apply(this.getUserEntity());
+                }
+            }
+        };
 
-        AsyncOperationProcessor.getInstance().process(()->{
+        AsyncOperationProcessor.getInstance().process(asynOp);
+
+
+
+    }
+
+    private class AsyncGetUserEntity implements IAsyncOperation{
+        /**
+         * 用户名
+         */
+        private final String _userName;
+        /**
+         * 密码
+         */
+        private final String _password;
+        /**
+         * 用户实体
+         */
+        private UserEntity _userEntity;
+
+        AsyncGetUserEntity(String userName,String password){
+            _userName=userName;
+            _password=password;
+        }
+
+        UserEntity getUserEntity(){
+            return _userEntity;
+        }
+
+        @Override
+        public void doAsync() {
             try (SqlSession mySqlSession=MySqlSessionFactory.openSession()){
-
+                LOGGER.info("当前进程 {}",Thread.currentThread().getName());
                 //获取 DAO
                 IUserDao dao = mySqlSession.getMapper(IUserDao.class);
                 //获取实体类
-                UserEntity userEntity=dao.getUserByName(userName);
+                UserEntity userEntity=dao.getUserByName(_userName);
 
                 if(null!=userEntity){
-                    if(!password.equals(userEntity.password)){
+                    if(!_password.equals(userEntity.password)){
                         throw new RuntimeException("密码错误");
                     }
                 }else{
                     userEntity=new UserEntity();
-                    userEntity.userName=userName;
-                    userEntity.password=password;
+                    userEntity.userName=_userName;
+                    userEntity.password=_password;
                     userEntity.heroAvatar="Hero_Shaman";
 
                     dao.insertInto(userEntity);
 
                 }
-                if(null!=callback){
-                    callback.apply(userEntity);
-                }
+
             }catch (Exception ex){
                 //记录错误日志
                 LOGGER.error(ex.getMessage(),ex);
 
             }
+        }
 
-        });
+        @Override
+        public void doFinish() {
 
-
-
+        }
     }
 
 }

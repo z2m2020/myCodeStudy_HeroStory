@@ -44,6 +44,18 @@ public final class MainMsgProcessor {
         return _instance;
     }
 
+
+    /**
+     * 处理runnable 实例
+     * @param r
+     */
+    public void process(Runnable r){
+        if(null==r){
+            return;
+        }
+        _es.submit(r);
+    }
+
     /**
      * 处理消息
      * @param ctx

@@ -1,5 +1,7 @@
 package com.z2m2020.herostory.async;
 
+import com.z2m2020.herostory.MainMsgProcessor;
+
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -36,14 +38,19 @@ public class AsyncOperationProcessor {
     }
     /**
      * 执行异步操作
-     * @param r
+     * @param op
      */
-    public void process(Runnable r){
-        if(null==r){
+    public void process(IAsyncOperation op){
+        if(null==op){
             return;
 
         }
-        _es.submit(r);
+        _es.submit(()->{
+            //执行异步操作
+            op.doAsync();
+            //回到主线程,执行完成逻辑
+            MainMsgProcessor.getInstance().process(()->op.doFinish());
+        });
     }
 
 }

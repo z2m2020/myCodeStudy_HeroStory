@@ -1,17 +1,21 @@
 package com.z2m2020.herostory.cmdhandler;
 
 import com.z2m2020.herostory.login.LoginService;
-import com.z2m2020.herostory.login.db.UserEntity;
+
 import com.z2m2020.herostory.model.User;
 import com.z2m2020.herostory.model.UserManager;
 import com.z2m2020.herostory.msg.GameMsgProtocol;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.AttributeKey;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 用户登录
  */
 public class UserLoginCmdHandler implements ICmdHandler<GameMsgProtocol.UserLoginCmd> {
+    static final Logger LOGGER= LoggerFactory.getLogger(UserLoginCmdHandler.class);
+
     @Override
     public void handle(ChannelHandlerContext ctx, GameMsgProtocol.UserLoginCmd cmd) {
         if (null == ctx || null == cmd) {
@@ -25,10 +29,13 @@ public class UserLoginCmdHandler implements ICmdHandler<GameMsgProtocol.UserLogi
             return;
         }
 
+        LOGGER.info("当前线程={}",Thread.currentThread().getName());
         //获取用户实体
+
+
         LoginService.getInstance().userLogin(userName, password,(userEntity)->{
             GameMsgProtocol.UserLoginResult.Builder resultBuilder=GameMsgProtocol.UserLoginResult.newBuilder();
-
+            LOGGER.info("当前线程 lambda={}",Thread.currentThread().getName());
 
 
             if(null!=userEntity){
