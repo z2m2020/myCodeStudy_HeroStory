@@ -26,42 +26,45 @@ public class UserLoginCmdHandler implements ICmdHandler<GameMsgProtocol.UserLogi
         }
 
         //获取用户实体
-        UserEntity userEntity = LoginService.getInstance().userLogin(userName, password);
-
-        GameMsgProtocol.UserLoginResult.Builder resultBuilder=GameMsgProtocol.UserLoginResult.newBuilder();
-
+        LoginService.getInstance().userLogin(userName, password,(userEntity)->{
+            GameMsgProtocol.UserLoginResult.Builder resultBuilder=GameMsgProtocol.UserLoginResult.newBuilder();
 
 
-        if(null!=userEntity){
-            resultBuilder.setUserId(-1);
-            resultBuilder.setUserName("");
-            resultBuilder.setHeroAvatar("");
+
+            if(null!=userEntity){
+                resultBuilder.setUserId(-1);
+                resultBuilder.setUserName("");
+                resultBuilder.setHeroAvatar("");
 
 
-        }else {
+            }else {
 //            int userID = -1;//cmd.getUserId();
 //            String heroAvatar =""; // cmd.getHeroAvatar();
 //
-            //用户入场消息
-            //
-            User newUser = new User();
-            newUser.userId = userEntity.userId;
-            newUser.userName=userEntity.userName;
-            newUser.heroAvatar = userEntity.heroAvatar;
-            newUser.currHp=100;
-            UserManager.addUser(newUser);
+                //用户入场消息
+                //
+                User newUser = new User();
+                newUser.userId = userEntity.userId;
+                newUser.userName=userEntity.userName;
+                newUser.heroAvatar = userEntity.heroAvatar;
+                newUser.currHp=100;
+                UserManager.addUser(newUser);
 
 
 
-            // 将用户Id 保存至session, 用户发送自己位置时,需要用到id,id只在用户登录时还会带来
-            ctx.channel().attr(AttributeKey.valueOf("userID")).set(newUser.userId);
-            resultBuilder.setUserId(userEntity.userId);
-            resultBuilder.setUserName(userEntity.userName);
-            resultBuilder.setHeroAvatar(userEntity.heroAvatar);
-        }
+                // 将用户Id 保存至session, 用户发送自己位置时,需要用到id,id只在用户登录时还会带来
+                ctx.channel().attr(AttributeKey.valueOf("userID")).set(newUser.userId);
+                resultBuilder.setUserId(userEntity.userId);
+                resultBuilder.setUserName(userEntity.userName);
+                resultBuilder.setHeroAvatar(userEntity.heroAvatar);
+            }
 
-        GameMsgProtocol.UserLoginResult newResult=resultBuilder.build();
-        ctx.writeAndFlush(newResult);
+            GameMsgProtocol.UserLoginResult newResult=resultBuilder.build();
+            ctx.writeAndFlush(newResult);
+            return null;
+        });
+
+
 
 
     }
