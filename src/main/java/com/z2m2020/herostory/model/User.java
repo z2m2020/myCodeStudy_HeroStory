@@ -9,6 +9,8 @@ public class User {
      */
     public int currHp;
 
+    public String userName;
+
     public User() {
     }
 

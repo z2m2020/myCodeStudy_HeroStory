@@ -7,6 +7,9 @@ import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public final class MainMsgProcessor {
     /**
      * 日志对象
@@ -17,6 +20,16 @@ public final class MainMsgProcessor {
      *
      */
     static private final MainMsgProcessor _instance=new MainMsgProcessor();
+
+
+    /**
+     * 创建一个单线程的线程池
+     */
+    private final ExecutorService _es= Executors.newSingleThreadExecutor((newRunnable)->{
+        Thread newThread=new Thread(newRunnable);
+        newThread.setName("MainMsgProcessor");
+        return newThread;
+    });
 
     /**
      * 私有化默认构造器
@@ -36,31 +49,31 @@ public final class MainMsgProcessor {
      * @param ctx
      * @param msg
      */
-    static public void process(ChannelHandlerContext ctx, Object msg){
+     public void process(ChannelHandlerContext ctx, Object msg){
+
+        if(null==ctx || null== msg){
+            return;
+        }
+
+        final Class<?> msgClazz=msg.getClass();
 
         LOGGER.info("收到客户端消息,msgClazz={} ,msg={} ",
                 msg.getClass().getSimpleName(),
                 msg
         );
-
-
-        /**
-         *  得到其他玩家发来的用户信息,并转发
-         */
-
-        try {
-            ICmdHandler<? extends GeneratedMessageV3> cmdHandler= CmdHandlerFactory.create(msg.getClass());
-            if(null!=cmdHandler){
-                cmdHandler.handle(ctx,cast(msg));
+        //封装到一个县城中
+        _es.submit(()->{
+            try {
+                //获取处理命令
+                ICmdHandler<? extends GeneratedMessageV3> cmdHandler= CmdHandlerFactory.create(msgClazz);
+                if(null!=cmdHandler){
+                    cmdHandler.handle(ctx,cast(msg));
+                }
+            }catch (Exception ex){
+                //记录错误日志
+                LOGGER.error(ex.getMessage(),ex);
             }
-        }catch (Exception ex){
-            //记录错误日志
-            LOGGER.error(ex.getMessage(),ex);
-        }
-
-
-
-
+        });
     }
 
     static private <TCmd extends GeneratedMessageV3> TCmd cast(Object msg){

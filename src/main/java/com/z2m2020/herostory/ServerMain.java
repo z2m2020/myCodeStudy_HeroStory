@@ -34,6 +34,9 @@ public class ServerMain {
         //初始化 消息识别器
         GameMsgRecognizer.init();
 
+        //初始化mysql会话工厂
+        MySqlSessionFactory.init();
+
         //netty代码
         final NioEventLoopGroup bossGroup = new NioEventLoopGroup();
         final NioEventLoopGroup workerGroup =new NioEventLoopGroup();
