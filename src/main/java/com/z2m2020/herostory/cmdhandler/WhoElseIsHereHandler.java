@@ -5,10 +5,9 @@ import com.z2m2020.herostory.model.UserManager;
 import com.z2m2020.herostory.msg.GameMsgProtocol;
 import io.netty.channel.ChannelHandlerContext;
 
-import java.util.function.BiConsumer;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 public class WhoElseIsHereHandler implements ICmdHandler<GameMsgProtocol.WhoElseIsHereCmd>{
     @Override
@@ -17,7 +16,7 @@ public class WhoElseIsHereHandler implements ICmdHandler<GameMsgProtocol.WhoElse
             return;
         }
 
-        final Predicate<User> userNoNull = u -> null != u;
+        final Predicate<User> userNoNull = Objects::nonNull;
         final Consumer<User> writeAndFlushFields=(user)->{
             GameMsgProtocol.WhoElseIsHereResult.Builder resultBuilder = GameMsgProtocol.WhoElseIsHereResult.newBuilder();
 
@@ -39,20 +38,20 @@ public class WhoElseIsHereHandler implements ICmdHandler<GameMsgProtocol.WhoElse
 
             ctx.writeAndFlush(resultBuilder.addUserInfo(userInfoBuilder).build());
         };
-        final BiConsumer<Integer, String> writeAndFlushUserInfo = (userId, heroAvatar) -> {
-            GameMsgProtocol.WhoElseIsHereResult.Builder resultBuilder = GameMsgProtocol.WhoElseIsHereResult.newBuilder();
-            GameMsgProtocol.WhoElseIsHereResult.UserInfo.Builder userInfoBuilder = GameMsgProtocol.WhoElseIsHereResult.UserInfo.newBuilder();
-            userInfoBuilder.setUserId(userId)
-                    .setHeroAvatar(heroAvatar);
-            GameMsgProtocol.WhoElseIsHereResult.UserInfo.MoveState.Builder mvStateBuilder=
-                    GameMsgProtocol.WhoElseIsHereResult.UserInfo.MoveState.newBuilder();
-//            mvStateBuilder.setFromPosX()
-
-            ctx.writeAndFlush(resultBuilder.addUserInfo(userInfoBuilder).build());
-        };
+//        final BiConsumer<Integer, String> writeAndFlushUserInfo = (userId, heroAvatar) -> {
+//            GameMsgProtocol.WhoElseIsHereResult.Builder resultBuilder = GameMsgProtocol.WhoElseIsHereResult.newBuilder();
+//            GameMsgProtocol.WhoElseIsHereResult.UserInfo.Builder userInfoBuilder = GameMsgProtocol.WhoElseIsHereResult.UserInfo.newBuilder();
+//            userInfoBuilder.setUserId(userId)
+//                    .setHeroAvatar(heroAvatar);
+//            GameMsgProtocol.WhoElseIsHereResult.UserInfo.MoveState.Builder mvStateBuilder=
+//                    GameMsgProtocol.WhoElseIsHereResult.UserInfo.MoveState.newBuilder();
+////            mvStateBuilder.setFromPosX()
+//
+//            ctx.writeAndFlush(resultBuilder.addUserInfo(userInfoBuilder).build());
+//        };
 //        final Stream<Map<Integer, User>> userMap = Stream.of(_userMap);
 //        final Collector<User, ?, Map<Integer, String>> userMapCollector = ;
-        UserManager.listUser().stream().//Users
+        UserManager.listUser().stream().  //Users
                 filter(userNoNull).
 //                collect(Collectors.toMap(User::getUserId, User::getHeroAvatar)).
                 forEach(writeAndFlushFields);

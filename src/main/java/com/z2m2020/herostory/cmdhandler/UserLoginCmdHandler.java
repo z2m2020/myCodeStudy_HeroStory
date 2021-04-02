@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
  * 用户登录
  */
 public class UserLoginCmdHandler implements ICmdHandler<GameMsgProtocol.UserLoginCmd> {
-    static final Logger LOGGER= LoggerFactory.getLogger(UserLoginCmdHandler.class);
+    private static final Logger LOGGER= LoggerFactory.getLogger(UserLoginCmdHandler.class);
 
     @Override
     public void handle(ChannelHandlerContext ctx, GameMsgProtocol.UserLoginCmd cmd) {

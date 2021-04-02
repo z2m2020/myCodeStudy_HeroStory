@@ -1,13 +1,11 @@
 package com.z2m2020.herostory.mq;
 
 import com.alibaba.fastjson.JSONObject;
-import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import org.apache.rocketmq.common.message.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.security.spec.ECField;
 
 /**
  * 消息队列生产者

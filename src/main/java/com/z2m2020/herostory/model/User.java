@@ -14,10 +14,7 @@ public class User {
     public User() {
     }
 
-    public User(int userId, String heroAvatar) {
-        this.userId = userId;
-        this.heroAvatar = heroAvatar;
-    }
+
 
     public int getUserId() {
         return userId;

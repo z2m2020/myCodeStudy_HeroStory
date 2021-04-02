@@ -1,6 +1,5 @@
 package com.z2m2020.herostory.model;
 
-import com.z2m2020.herostory.model.User;
 
 import java.util.Collection;
 import java.util.Map;
@@ -25,7 +24,7 @@ public final class UserManager {
 
     /**
      * 添加用户
-     * @param u
+     * @param u User
      */
     static public void addUser(User u){
         if(null!=u) {
@@ -35,7 +34,7 @@ public final class UserManager {
 
     /**
      * 移除用户
-     * @param userId
+     * @param userId userId
      */
     static public void removeByUserId(Integer userId){
         if (null!=userId){
@@ -45,7 +44,7 @@ public final class UserManager {
 
     /**
      * 列表用户
-     * @return
+     * @return User list
      */
     static public Collection<User> listUser(){
         return _userMap.values();

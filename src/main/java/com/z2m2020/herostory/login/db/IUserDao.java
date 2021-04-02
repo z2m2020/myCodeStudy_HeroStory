@@ -1,19 +1,16 @@
 package com.z2m2020.herostory.login.db;
 
-import org.apache.ibatis.annotations.Mapper;
-
-//@Mapper
 public interface IUserDao {
     /**
      * 根据用户名获取实体
-     * @param userName
-     * @return
+     * @param userName 用户名
+     * @return 实体
      */        //getByUserName
     UserEntity getUserByName(String userName);
 
     /**
      * 添加用户实体
-     * @param newEntity
+     * @param newEntity 实体
      */
     void insertInto(UserEntity newEntity);
 

@@ -16,10 +16,7 @@ import org.slf4j.LoggerFactory;
  */
 public class UserAttkCmdHandler implements ICmdHandler<GameMsgProtocol.UserAttkCmd> {
     /**
-     * 日至对象
-     *
-     * @param ctx
-     * @param userAttkCmd
+     * 日志对象
      */
     static private final Logger LOGGER = LoggerFactory.getLogger(UserAttkCmdHandler.class);
 
@@ -71,8 +68,8 @@ public class UserAttkCmdHandler implements ICmdHandler<GameMsgProtocol.UserAttkC
 
     /**
      * 广播攻击结果
-     * @param attkUserId
-     * @param targetUserId
+     * @param attkUserId 主角id
+     * @param targetUserId 敌人id
      */
     static private  void broadcastAttkResult(int attkUserId,int targetUserId){
         if(attkUserId<0){return;}
@@ -88,8 +85,8 @@ public class UserAttkCmdHandler implements ICmdHandler<GameMsgProtocol.UserAttkC
 
     /**
      * 广播减血结果
-     * @param targetUserId
-     * @param subtractHp
+     * @param targetUserId 敌人id
+     * @param subtractHp 减少的血量
      */
     static private void broadcastSubtractHpResult(int targetUserId,int subtractHp){
         if (targetUserId<=0|| subtractHp<=0){
@@ -110,7 +107,7 @@ public class UserAttkCmdHandler implements ICmdHandler<GameMsgProtocol.UserAttkC
 
     /**
      * 广播角色死亡消息
-     * @param targetUserId
+     * @param targetUserId 角色id
      */
     static private void broadcastDieResult(int targetUserId){
         final GameMsgProtocol.UserDieResult.Builder resultBuilder = GameMsgProtocol.UserDieResult.newBuilder();

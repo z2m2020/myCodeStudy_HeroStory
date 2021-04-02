@@ -22,7 +22,7 @@ public final class Broadcaster {
 
     /**
      * 添加信道
-     * @param ch
+     * @param ch Channel
      */
     static public void addChannel(Channel ch){
         if(null!=ch){

@@ -80,7 +80,7 @@ public final class RankService {
         /**
          * 获取排名条目列表
          *
-         * @return
+         * @return RandItem list
          */
         List<RankItem> getRankItemList() {
             return _rankItemList;

@@ -3,11 +3,11 @@ package com.z2m2020.herostory.async;
 public interface IAsyncOperation {
     /**
      * 获取绑定id
-     * @return
+     * @return 角色id
      */
     default int getBindId(){
         return 0;
-    };
+    }
     /**
      * 执行异步操作
      */
@@ -17,5 +17,5 @@ public interface IAsyncOperation {
      */
     default void doFinish(){
 
-    };
+    }
 }

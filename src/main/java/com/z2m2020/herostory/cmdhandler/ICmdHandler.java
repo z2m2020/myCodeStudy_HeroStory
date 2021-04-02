@@ -7,8 +7,8 @@ import io.netty.channel.ChannelHandlerContext;
 public interface ICmdHandler<TCmd extends GeneratedMessageV3> {
     /**
      * 处理命令
-     * @param ctx
-     * @param cmd
+     * @param ctx channel上下文
+     * @param cmd 封装后的命令
      */
     void handle(ChannelHandlerContext ctx, TCmd cmd);
 }

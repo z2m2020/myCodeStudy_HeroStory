@@ -39,7 +39,7 @@ public final class RedisUtil {
     /**
      * 获取Jedis实例
      *
-     * @return
+     * @return redis实例
      */
     static public Jedis getJedis(){
         if(null==_jedisPool){

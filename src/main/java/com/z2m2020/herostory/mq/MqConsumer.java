@@ -36,7 +36,7 @@ public class MqConsumer {
                         LOGGER.info("从消息队列中收到胜利消息,winnerId={},loserId={}",victorMsg.winnerId,victorMsg.loserId);
 
                         RankService.getInstance().refreshRank(victorMsg.winnerId,victorMsg.loserId);
-                    };
+                    }
 
                     return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
                 }

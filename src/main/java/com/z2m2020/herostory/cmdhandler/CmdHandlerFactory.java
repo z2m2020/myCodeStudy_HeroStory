@@ -1,7 +1,6 @@
 package com.z2m2020.herostory.cmdhandler;
 
 import com.google.protobuf.GeneratedMessageV3;
-import com.z2m2020.herostory.msg.GameMsgProtocol;
 import com.z2m2020.herostory.util.PackageUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,7 +8,6 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.sql.ParameterMetaData;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -92,8 +90,8 @@ public final class CmdHandlerFactory {
     /**
      * 创建命令修理器
      *
-     * @param msgClazz
-     * @return
+     * @param msgClazz 消息类型
+     * @return cmdHandler
      */
     static public ICmdHandler<? extends GeneratedMessageV3> create(Class<?> msgClazz) {
         if (null == msgClazz) {

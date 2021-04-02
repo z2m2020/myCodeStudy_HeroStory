@@ -36,9 +36,7 @@ public class UserEntryCmdHandler implements ICmdHandler<GameMsgProtocol.UserEntr
                 .setUserName(existUser.userName)
                 .setHeroAvatar(existUser.heroAvatar);
 
-        /**构建消息结果并广播
-         *
-         */
+
         LOGGER.info("角色创建完毕");
 
         GameMsgProtocol.UserEntryResult newResult = resultBuilder.build();

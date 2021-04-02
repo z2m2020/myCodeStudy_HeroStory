@@ -1,7 +1,6 @@
 package com.z2m2020.herostory.login;
 
 import com.alibaba.fastjson.JSONObject;
-import com.sun.corba.se.spi.servicecontext.UEInfoServiceContext;
 import com.z2m2020.herostory.MySqlSessionFactory;
 import com.z2m2020.herostory.async.AsyncOperationProcessor;
 import com.z2m2020.herostory.async.IAsyncOperation;
