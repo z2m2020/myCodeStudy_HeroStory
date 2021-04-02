@@ -1,6 +1,8 @@
 package com.z2m2020.herostory;
 
 import com.z2m2020.herostory.cmdhandler.CmdHandlerFactory;
+import com.z2m2020.herostory.mq.MqProducer;
+import com.z2m2020.herostory.util.RedisUtil;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -36,6 +38,11 @@ public class ServerMain {
 
         //初始化mysql会话工厂
         MySqlSessionFactory.init();
+
+        //初始化Redis
+        RedisUtil.init();
+        //初始化消息队列
+        MqProducer.init();
 
         //netty代码
         final NioEventLoopGroup bossGroup = new NioEventLoopGroup();

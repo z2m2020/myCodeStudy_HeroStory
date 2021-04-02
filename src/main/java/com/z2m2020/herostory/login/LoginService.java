@@ -1,13 +1,17 @@
 package com.z2m2020.herostory.login;
 
+import com.alibaba.fastjson.JSONObject;
+import com.sun.corba.se.spi.servicecontext.UEInfoServiceContext;
 import com.z2m2020.herostory.MySqlSessionFactory;
 import com.z2m2020.herostory.async.AsyncOperationProcessor;
 import com.z2m2020.herostory.async.IAsyncOperation;
 import com.z2m2020.herostory.login.db.IUserDao;
 import com.z2m2020.herostory.login.db.UserEntity;
+import com.z2m2020.herostory.util.RedisUtil;
 import org.apache.ibatis.session.SqlSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import redis.clients.jedis.Jedis;
 
 import java.util.function.Function;
 
@@ -61,6 +65,30 @@ public class LoginService {
 
     }
 
+    /**
+     * 更新redis中的用户基本信息,
+     * @param userEntity 用户实体
+     */
+    private void updateBasicInfoInRedis(UserEntity userEntity){
+        if(null==userEntity){
+            return;
+        }
+        try(final Jedis redis = RedisUtil.getJedis()){
+            JSONObject jsonObj=new JSONObject();
+            jsonObj.put("userName",userEntity.userName);
+            jsonObj.put("heroAvatar",userEntity.heroAvatar);
+
+
+            redis.hset("User_"+userEntity.userId,"BasicInfo",jsonObj.toJSONString());
+
+
+        }catch (Exception ex){
+            LOGGER.error(ex.getMessage(),ex);
+
+        }
+
+    }
+
     private class AsyncGetUserEntity implements IAsyncOperation{
         /**
          * 用户名
@@ -106,6 +134,9 @@ public class LoginService {
                     dao.insertInto(userEntity);
 
                 }
+
+                LoginService.getInstance().updateBasicInfoInRedis(userEntity);
+                _userEntity=userEntity;
 
             }catch (Exception ex){
                 //记录错误日志

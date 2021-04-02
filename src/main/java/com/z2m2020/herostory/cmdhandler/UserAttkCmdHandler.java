@@ -3,6 +3,8 @@ package com.z2m2020.herostory.cmdhandler;
 import com.z2m2020.herostory.Broadcaster;
 import com.z2m2020.herostory.model.User;
 import com.z2m2020.herostory.model.UserManager;
+import com.z2m2020.herostory.mq.MqProducer;
+import com.z2m2020.herostory.mq.VictorMsg;
 import com.z2m2020.herostory.msg.GameMsgProtocol;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.AttributeKey;
@@ -33,7 +35,7 @@ public class UserAttkCmdHandler implements ICmdHandler<GameMsgProtocol.UserAttkC
         }
 
         //获取目标用户Id
-        int targetUserId = userAttkCmd.getTargetUserId();
+        Integer targetUserId = userAttkCmd.getTargetUserId();
 
         //获取目标用户
         final User targetUser = UserManager.getByUserId(targetUserId);
@@ -57,6 +59,11 @@ public class UserAttkCmdHandler implements ICmdHandler<GameMsgProtocol.UserAttkC
         //广播对手死亡结果
         if(0>=targetUser.currHp){
             broadcastDieResult(targetUserId);
+
+            VictorMsg newMsg=new VictorMsg();
+            newMsg.winnerId=attkUserId;
+            newMsg.loserId=targetUserId;
+            MqProducer.sendMsg("herostory_victor",newMsg);
 
         }
 
